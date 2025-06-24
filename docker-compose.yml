@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  dt_marketplace_ui:
+    # Build the image from the Dockerfile in the current directory
+    build:
+      context: .
+      args:
+        # Pass the API URL from our .env.local file into the build process
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    
+    # Name the container for easier management
+    container_name: dt_marketplace_ui
+    
+    # The name for the image that will be built
+    image: dt_marketplace_ui:1.0
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    # Environment variables for the running container
+    # These are available at runtime inside the container via process.env
+    # env_file:
+    #   - .env.local
+    
+    ports:
+      # Map port 3000 of the container to port 3000 on your host machine
+      # Format is <HOST_PORT>:<CONTAINER_PORT>
+      - "3018:3000"
+      
+    # Restart policy
+    restart: unless-stopped
+    volumes:
+      - /volume1/docker/authserver/microservices/dt_marketplace_web/logs:/var/log/nginx
+    networks:
+      - api_shared_network
+
+networks:
+  api_shared_network:
+    driver: bridge
+    external: true
